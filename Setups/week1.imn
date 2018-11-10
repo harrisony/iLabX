@@ -490,6 +490,31 @@ link l8 {
     nodes {n12 n11}
 }
 
+annotation a1 {
+    iconcoords {232.0 50.0}
+    type text
+    label {Team Australia}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    effects {bold}
+    canvas c1
+}
+
+annotation a2 {
+    type text
+    iconcoords {426.0 58.0}
+    label {}
+    canvas c1
+}
+
+annotation a3 {
+    type text
+    iconcoords {-23.0 48.0}
+    label {}
+    canvas c1
+}
+
 canvas c1 {
     name {Canvas1}
     refpt {0 0 47.5791667 -122.132322 2.0}
