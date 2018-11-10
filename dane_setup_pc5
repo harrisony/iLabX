@@ -15,5 +15,5 @@ sudo mv named.conf.options /etc/bind/named.conf.options
 sudo mv db.ilabbank.com /etc/bind/db.ilabbank.com
 
 # Start bind
-sudo systemctl start bind9
+sudo service bind9 start
 

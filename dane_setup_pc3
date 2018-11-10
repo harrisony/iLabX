@@ -15,7 +15,7 @@ sudo mv index.html /var/www/html/index.html
 # Create the certificate and key folder
 sudo mkdir /etc/apache2/crt
 sudo mkdir /etc/apache2/key
-
+sudo mkdir -p /var/log/apache2/ /run/lock/apache2
 # Generate the certificate for our bank's website
 sudo openssl req -new -x509 -days 365 -keyout /etc/apache2/key/ilab_bank.key -out /etc/apache2/crt/ilab_bank.crt -nodes -subj '/O=ilab Bank GmbH/OU=ilab Bank web department/CN=app.ilabbank.com'
 
@@ -26,4 +26,4 @@ sudo ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enab
 sudo a2enmod ssl
 
 # Start apache
-sudo systemctl start apache2
+sudo service apache2 start

@@ -27,5 +27,4 @@ tar -xf mitmproxy-4.0.3-linux.tar.gz -C ./mitmproxy
 
 # Start the mitmproxy once, so the certificates are created under ~/.mitmproxy
 echo 'please quit mitmproxy aftr it loads, ok?'
-read
 /root/Downloads/mitmproxy/mitmproxy

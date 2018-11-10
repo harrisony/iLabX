@@ -138,6 +138,7 @@ node n4 {
 	custom-config-id service:UserDefined
 	custom-command UserDefined
 	config {
+	dirs=('/var/run/apache2', '/var/log', '/run/lock/apache2', )
 	files=('resolv.sh', )
 	cmdup=('sh resolv.sh', )
 	}
@@ -147,6 +148,20 @@ node n4 {
 	custom-command resolv.sh
 	config {
 	echo "nameserver 8.8.8.8" > /etc/resolv.conf
+	}
+    }
+    custom-config {
+	custom-config-id service:HTTP
+	custom-command HTTP
+	config {
+	dirs=('/etc/apache2', '/var/run/apache2', '/var/log/apache2', '/var/lock/apache2', '/var/www', '/run/lock', )
+	files=
+	startidx=80
+	cmdup=('chown www-data /var/lock/apache2', 'apache2ctl start', )
+	cmddown=('apache2ctl stop', )
+	cmdval=('pidof apache2', )
+	meta=
+	starttime=
 	}
     }
     custom-config {
@@ -496,7 +511,7 @@ annotation a1 {
     label {Team Australia}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     effects {bold}
     canvas c1
 }
