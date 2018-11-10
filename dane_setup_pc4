@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Add PC5 as nameserver
+sudo sed -i '1s/^/nameserver fde4:8dba:82e1::5\n/' /etc/resolv.conf
+
+mkdir -p ~/Downloads
+cd ~/Downloads
+
+# Install go
+wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
+# Make the go command available in all fish shells
+touch ~/.config/fish/config.fish
+printf 'set PATH $PATH /usr/local/go/bin\nexport PATH\nfunction ll\n\tls -lh $argv\nend\n' >> ~/.config/fish/config.fish
+set PATH $PATH /usr/local/go/bin
+# Create the necessary go directories
+mkdir -p ~/go/src/ilab/dane/dane_tls
+mkdir ~/go/src/ilab/dane/tlsa
+mkdir ~/go/bin
+mkdir ~/go/pkg
+
+# Install mitmproxy
+wget https://snapshots.mitmproxy.org/4.0.3/mitmproxy-4.0.3-linux.tar.gz
+mkdir mitmproxy
+tar -xf mitmproxy-4.0.3-linux.tar.gz -C ./mitmproxy
+
+# Start the mitmproxy once, so the certificates are created under ~/.mitmproxy
+echo 'please quit mitmproxy aftr it loads, ok?'
+read
+/home/ilab/Downloads/mitmproxy/mitmproxy

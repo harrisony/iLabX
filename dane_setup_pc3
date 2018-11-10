@@ -1,0 +1,28 @@
+#!/bin/bash
+
+mkdir -p ~/Downloads
+cd ~/Downloads
+
+# Download the ssl configuration for apache
+wget https://ilab2.net.in.tum.de/courses/material/ilab2_mini_dane_tlsa/default-ssl.conf
+sudo mv default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+
+# Download the bank's website
+wget https://ilab2.net.in.tum.de/courses/material/ilab2_mini_dane_tlsa/index.html
+sudo mv index.html /var/www/html/index.html
+
+# Create the certificate and key folder
+sudo mkdir /etc/apache2/crt
+sudo mkdir /etc/apache2/key
+
+# Generate the certificate for our bank's website
+sudo openssl req -new -x509 -days 365 -keyout /etc/apache2/key/ilab_bank.key -out /etc/apache2/crt/ilab_bank.crt -nodes -subj '/O=ilab Bank GmbH/OU=ilab Bank web department/CN=app.ilabbank.com'
+
+# Create symbolic link to our ssl configuration, otherwise it will not be used by apache
+sudo ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/000-default-ssl.conf
+
+# Enable the ssl apache module
+sudo a2enmod ssl
+
+# Start apache
+sudo systemctl start apache2

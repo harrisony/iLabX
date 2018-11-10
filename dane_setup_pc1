@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Add PC5 as nameserver
+sudo sed -i '1s/^/nameserver fde4:8dba:82e1::5\n/' /etc/resolv.conf
+
+mkdir -p ~/Downloads
+cd ~/Downloads
+set -xU DISPLAY 10.44.44.254:0 
+
+# Install go
+wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
+# Make the go command available in all fish shells
+touch ~/.config/fish/config.fish
+printf 'set PATH $PATH /usr/local/go/bin\nexport PATH\nfunction ll\n\tls -lh $argv\nend\n' >> ~/.config/fish/config.fish
+set PATH $PATH /usr/local/go/bin
+# Create the necessary go directories
+mkdir -p ~/go/src/ilab/dane/dane_tls
+mkdir ~/go/src/ilab/dane/tlsa
+mkdir ~/go/bin
+mkdir ~/go/pkg
+
+# Import the bank's certificate
+#sudo mkdir /usr/local/share/ca-certificates/extra
+scp pc3:/etc/apache2/crt/ilab_bank.crt ~/go/src/ilab/dane
+#sudo cp ilab_bank.crt /usr/local/share/ca-certificates/extra/ilab_bank.crt
+#sudo update-ca-certificates
+
+# Start firefox once to ensure the .mozilla dir is created
+firefox & 
+sleep 3
+ps aux | grep -m 1 firefox-esr | awk '{print $2}' | xargs kill -1
+
+# Find the user directory that has just been created
+MOZILLA_USER_DIR=$(find ~/.mozilla/firefox -name "cert8.db" -printf '%h\n')
+
+# Configure the proxy in firefox
+echo "user_pref(\"network.proxy.backup.ftp\", \"\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.backup.ftp_port\", 0);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.backup.socks\", \"\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.backup.socks_port\", 0);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.backup.ssl\", \"\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.backup.ssl_port\", 0);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.ftp\", \"fde4:8dba:82e1::4\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.ftp_port\", 8080);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.http\", \"fde4:8dba:82e1::4\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.http_port\", 8080);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.no_proxies_on\", \"\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.share_proxy_settings\", true);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.socks\", \"fde4:8dba:82e1::4\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.socks_port\", 8080);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.ssl\", \"fde4:8dba:82e1::4\");" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.ssl_port\", 8080);" >> $MOZILLA_USER_DIR/prefs.js
+echo "user_pref(\"network.proxy.type\", 1);" >> $MOZILLA_USER_DIR/prefs.js
+
+# Download libnss3-tools
+sudo apt install libnss3-tools
+
+# Download the mitmproxy's root certificate from pc4
+scp pc4:/home/ilab/.mitmproxy/mitmproxy-ca-cert.pem ~/Downloads
+# Import it into Firefox
+certutil -A -n mitmproxy -t "TC,Cw,Tw" -i ~/Downloads/mitmproxy-ca-cert.pem -d $MOZILLA_USER_DIR
+
+# Move it into the golang repo, as we need it later in the coding session
+mv mitmproxy-ca-cert.pem ~/go/src/ilab/dane
