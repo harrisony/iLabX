@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Add PC5 as nameserver
+sudo cp /home/ilab/harrisons-ilab/hosts /etc/hosts
 sudo sed -i '1s/^/nameserver fde4:8dba:82e1::5\n/' /etc/resolv.conf
 
 mkdir -p ~/Downloads
@@ -20,11 +21,11 @@ mkdir ~/go/bin
 mkdir ~/go/pkg
 
 # Install mitmproxy
-wget https://snapshots.mitmproxy.org/4.0.3/mitmproxy-4.0.3-linux.tar.gz
+wget -c https://snapshots.mitmproxy.org/4.0.3/mitmproxy-4.0.3-linux.tar.gz
 mkdir mitmproxy
 tar -xf mitmproxy-4.0.3-linux.tar.gz -C ./mitmproxy
 
 # Start the mitmproxy once, so the certificates are created under ~/.mitmproxy
 echo 'please quit mitmproxy aftr it loads, ok?'
 read
-/home/ilab/Downloads/mitmproxy/mitmproxy
+/root/Downloads/mitmproxy/mitmproxy

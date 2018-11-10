@@ -2,7 +2,7 @@
 
 # Add PC5 as nameserver
 sudo sed -i '1s/^/nameserver fde4:8dba:82e1::5\n/' /etc/resolv.conf
-
+sudo cp /home/ilab/harrisons-ilab/hosts /etc/hosts
 mkdir -p ~/Downloads
 cd ~/Downloads
 set -xU DISPLAY 10.44.44.254:0 
@@ -57,7 +57,7 @@ echo "user_pref(\"network.proxy.type\", 1);" >> $MOZILLA_USER_DIR/prefs.js
 sudo apt install libnss3-tools
 
 # Download the mitmproxy's root certificate from pc4
-scp pc4:/home/ilab/.mitmproxy/mitmproxy-ca-cert.pem ~/Downloads
+scp pc4:/root/.mitmproxy/mitmproxy-ca-cert.pem ~/Downloads
 # Import it into Firefox
 certutil -A -n mitmproxy -t "TC,Cw,Tw" -i ~/Downloads/mitmproxy-ca-cert.pem -d $MOZILLA_USER_DIR
 

@@ -5,3 +5,4 @@ cd harrisons-ilab
 git checkout 201802
 git pull
 sudo ./setup.sh
+echo 'ok done'
